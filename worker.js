@@ -14,6 +14,21 @@ export default {
     }
 
     const html = await response.text();
+    const canonicalUrl = `${url.origin}${url.pathname === "/index.html" ? "/" : url.pathname}`;
+    const socialMeta = `
+      <meta name="robots" content="index,follow" />
+      <link rel="canonical" href="${canonicalUrl}" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="Vaylento | Outsourced Travel Operations" />
+      <meta property="og:description" content="Vaylento provides outsourced travel operations and reservation support for travel companies." />
+      <meta property="og:url" content="${canonicalUrl}" />
+      <meta property="og:site_name" content="Vaylento" />
+      <meta property="og:image" content="${url.origin}/hero.png" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Vaylento | Outsourced Travel Operations" />
+      <meta name="twitter:description" content="Outsourced travel operations and reservation support for travel companies." />
+      <meta name="twitter:image" content="${url.origin}/hero.png" />
+    `;
 
     const mobileNav = `
       <style>
@@ -78,9 +93,17 @@ export default {
     `;
 
     const headerMarker = "</div>\n\n  </header>";
-    const updatedHtml = html.includes(headerMarker)
-      ? html.replace(headerMarker, `${mobileNav}</div>\n\n  </header>`)
-      : html;
+    let updatedHtml = html;
+
+    if (updatedHtml.includes("</head>")) {
+      updatedHtml = updatedHtml.replace("</head>", `${socialMeta}</head>`);
+    }
+
+    updatedHtml = updatedHtml.replace("Trusted by Travel-Focused Teams", "Built for Travel-Focused Teams");
+
+    if (updatedHtml.includes(headerMarker)) {
+      updatedHtml = updatedHtml.replace(headerMarker, `${mobileNav}</div>\n\n  </header>`);
+    }
 
     const headers = new Headers(response.headers);
     headers.set("content-type", "text/html; charset=UTF-8");
