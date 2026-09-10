@@ -17,73 +17,22 @@ export default {
 
     const mobileNav = `
       <style>
-        .mobile-menu-toggle{
-          display:none;
-          width:44px;
-          height:44px;
-          padding:0;
-          border:1px solid #dfe9f2;
-          border-radius:12px;
-          background:#fff;
-          color:#0b1c33;
-          cursor:pointer;
-          align-items:center;
-          justify-content:center;
-          flex-direction:column;
-          gap:5px;
-        }
-        .mobile-menu-toggle span{
-          display:block;
-          width:20px;
-          height:2px;
-          border-radius:99px;
-          background:currentColor;
-          transition:.2s ease;
-        }
+        .mobile-menu-toggle{display:none;width:44px;height:44px;padding:0;border:1px solid #dfe9f2;border-radius:12px;background:#fff;color:#0b1c33;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px}
+        .mobile-menu-toggle span{display:block;width:20px;height:2px;border-radius:99px;background:currentColor;transition:.2s ease}
         .mobile-menu-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
         .mobile-menu-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
         .mobile-menu-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-        .mobile-nav{
-          display:none;
-          position:absolute;
-          top:calc(100% + 10px);
-          left:4%;
-          right:4%;
-          padding:12px;
-          background:#fff;
-          border:1px solid #dfe9f2;
-          border-radius:18px;
-          box-shadow:0 20px 50px rgba(11,28,51,.16);
-        }
+        .mobile-nav{display:none;position:absolute;top:calc(100% + 10px);left:4%;right:4%;padding:12px;background:#fff;border:1px solid #dfe9f2;border-radius:18px;box-shadow:0 20px 50px rgba(11,28,51,.16)}
         .mobile-nav.open{display:flex;flex-direction:column}
-        .mobile-nav a{
-          padding:13px 14px;
-          border-radius:12px;
-          color:#38516a;
-          font-weight:700;
-        }
+        .mobile-nav a{padding:13px 14px;border-radius:12px;color:#38516a;font-weight:700}
         .mobile-nav a:hover{background:#f4f8fc;color:#1e8bff}
-        .mobile-nav .mobile-nav-cta{margin-top:4px;background:#0b1c33;color:#fff;text-align:center}
+        .mobile-nav .mobile-nav-cta{margin-top:4px;padding:13px 14px;border:0;border-radius:12px;background:#0b1c33;color:#fff;text-align:center;font:inherit;font-weight:800;cursor:pointer}
         body.mobile-nav-open{overflow:hidden}
-        @media(max-width:900px){
-          .site-header{position:sticky}
-          .nav{position:relative}
-          .nav-cta{display:none}
-          .mobile-menu-toggle{display:flex}
-        }
-        @media(min-width:901px){
-          .mobile-nav{display:none!important}
-        }
+        @media(max-width:900px){.site-header{position:sticky}.nav{position:relative}.nav-cta{display:none}.mobile-menu-toggle{display:flex}}
+        @media(min-width:901px){.mobile-nav{display:none!important}}
       </style>
 
-      <button
-        class="mobile-menu-toggle"
-        id="mobileMenuToggle"
-        type="button"
-        aria-label="Open navigation"
-        aria-expanded="false"
-        aria-controls="mobileNav"
-      >
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileNav">
         <span></span><span></span><span></span>
       </button>
 
@@ -128,14 +77,14 @@ export default {
       </script>
     `;
 
-    const updatedHtml = html.replace("</body>", `${mobileNav}</body>`);
+    const headerMarker = "</div>\n\n  </header>";
+    const updatedHtml = html.includes(headerMarker)
+      ? html.replace(headerMarker, `${mobileNav}</div>\n\n  </header>`)
+      : html;
+
     const headers = new Headers(response.headers);
     headers.set("content-type", "text/html; charset=UTF-8");
 
-    return new Response(updatedHtml, {
-      status: response.status,
-      statusText: response.statusText,
-      headers
-    });
+    return new Response(updatedHtml, {status: response.status,statusText: response.statusText,headers});
   }
 };
